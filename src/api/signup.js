@@ -8,17 +8,18 @@ const supabase = createClient(
 export default async function handler(req, res) {
   const { name, email, reason } = req.body
 
-  const { data, error } = await supabase
-    .from("signups")
-    .insert([
-      {
-        name: name,
-        email: email,
-        reason: reason,
-      },
-    ])
-    .then(data => {
-      console.log(`We received your signup request.`, req.body)
-      return { data, error: null }
-    })
+  const { data, error } = await supabase.from("signups").insert([
+    {
+      name: name,
+      email: email,
+      reason: reason,
+    },
+  ])
+
+  if (error) {
+    console.log(`Error:`, error)
+    res.status(500).send(error)
+  }
+
+  res.json(data)
 }
